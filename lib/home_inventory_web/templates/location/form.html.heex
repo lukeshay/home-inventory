@@ -1,0 +1,33 @@
+
+<.form let={f} for={@changeset} action={@action}>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= label f, :name, class: "label" %>
+    <div class="control">
+      <%= text_input f, :name, class: "input" %>
+    </div>
+    <%= error_tag f, :name %>
+  </div>
+
+  <div class="field">
+    <%= label f, :description, class: "label" %>
+    <div class="control">
+      <%= textarea f, :description, class: "textarea" %>
+    </div>
+    <%= error_tag f, :description %>
+  </div>
+  
+  <div class="field is-grouped">
+    <div class="control">
+      <%= submit "Save", class: "button is-link" %>
+    </div>
+    <div class="control">
+      <%= link "Cancel", to: @cancel, class: "button is-link is-light" %>
+    </div>
+  </div>
+</.form>

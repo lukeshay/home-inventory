@@ -5,26 +5,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <%= csrf_meta_tag() %>
-    <%= live_title_tag assigns[:page_title] || "HomeInventory", suffix: " · Phoenix Framework" %>
+    <%= live_title_tag assigns[:page_title] || "Home Inventory" %>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
   <body>
-    <header>
-      <section class="container">
-        <nav>
-          <ul>
-            <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-            <% end %>
-          </ul>
-        </nav>
-        <a href="https://phoenixframework.org/" class="phx-logo">
-          <img src={Routes.static_path(@conn, "/images/phoenix.png")} alt="Phoenix Framework Logo"/>
-        </a>
-      </section>
+    <header class="container is-max-desktop">
+      <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item" href={Routes.page_path(@conn, :index)}>
+            <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+          </a>
+
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-start">
+            <%= link "Locations", to: Routes.location_path(@conn, :index), class: "navbar-item" %>
+            <%= link "Items", to: Routes.item_path(@conn, :index), class: "navbar-item" %>
+          </div>
+          <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+          <div class="navbar-end">
+            <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home), class: "navbar-item" %></li>
+          </div>
+          <% end %>
+        </div>
+      </nav>
     </header>
-    <%= @inner_content %>
+    <section class="section container is-max-desktop">
+      <%= @inner_content %>
+    </section>
   </body>
 </html>

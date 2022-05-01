@@ -1,0 +1,3 @@
+<h1 class="is-size-2">Edit Item</h1>
+
+<%= render "form.html", Map.put(Map.put(assigns, :action, Routes.item_path(@conn, :update, @item)), :cancel, Routes.item_path(@conn, :index)) %>

@@ -1,0 +1,17 @@
+<h1 class="is-size-2">Item</h1>
+
+<ul>
+
+  <li>
+    <strong>Location ID:</strong>
+    <%= @item.location_id %>
+  </li>
+  <li>
+    <strong>Name:</strong>
+    <%= @item.name %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.item_path(@conn, :edit, @item) %></span> |
+<span><%= link "Back", to: Routes.item_path(@conn, :index) %></span>

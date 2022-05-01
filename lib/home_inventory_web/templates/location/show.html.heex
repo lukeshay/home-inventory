@@ -1,0 +1,34 @@
+<h1 class="is-size-2">Location</h1>
+
+<ul>
+
+  <li>
+    <strong>ID:</strong>
+    <%= @location.id %>
+  </li>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @location.name %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @location.description %>
+  </li>
+
+  <li>
+    <strong>Items:</strong>
+      <ul>
+        <%= for item <- @location.items do %>
+          <li>
+            <%= item.name %>
+          </li>
+        <% end %>
+      </ul>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.location_path(@conn, :edit, @location) %></span> |
+<span><%= link "Back", to: Routes.location_path(@conn, :index) %></span>
