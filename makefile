@@ -147,3 +147,18 @@ lint-scripts:
 # .PHONY: lint-styles
 # lint-styles:
 # 	cd assets && npx stylelint $(STYLES_PATTERN)
+
+# Fly deployment targets
+# ------------------------------
+
+.PHONY: fly-deploy
+fly-deploy: fly-build fly-push ## Builds and deploys the the Docker image for the OTP release to fly
+	fly deploy --image registry.fly.io/young-wind-7044:$(GIT_REVISION)
+
+.PHONY: fly-build
+fly-build: build
+	docker tag $(DOCKER_LOCAL_IMAGE) registry.fly.io/young-wind-7044:$(GIT_REVISION)
+
+.PHONY: fly-push
+fly-push:
+	docker push registry.fly.io/young-wind-7044:$(GIT_REVISION)

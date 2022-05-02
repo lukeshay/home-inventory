@@ -43,11 +43,6 @@ defmodule HomeInventoryWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
 
-  plug Plug.Session,
-    store: :cookie,
-    key: "_home_inventory_key",
-    signing_salt: get_env!("SESSION_SIGNING_SALT")
-
   plug HomeInventoryHealth.Router
   plug(:halt_if_sent)
   plug HomeInventoryWeb.Router

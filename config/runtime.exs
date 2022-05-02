@@ -9,9 +9,11 @@ config :home_inventory,
   force_ssl: get_uri_part(canonical_uri, :scheme) == "https"
 
 config :home_inventory, HomeInventory.Repo,
+  adapter: Ecto.Adapters.Postgres,
   url: get_env!("DATABASE_URL"),
   ssl: get_env("DATABASE_SSL", :boolean),
-  pool_size: get_env!("DATABASE_POOL_SIZE", :integer)
+  pool_size: get_env!("DATABASE_POOL_SIZE", :integer),
+  timeout: 60000
 
 config :home_inventory, HomeInventoryWeb.Endpoint,
   http: [port: get_env!("PORT", :integer)],
@@ -37,11 +39,15 @@ config :home_inventory,
     password: get_env("BASIC_AUTH_PASSWORD")
   ]
 
-config :sentry,
-  dsn: get_env("SENTRY_DSN"),
-  environment_name: get_env("SENTRY_ENVIRONMENT_NAME"),
-  included_environments: [get_env("SENTRY_ENVIRONMENT_NAME")]
+# config :sentry,
+#   dsn: get_env("SENTRY_DSN"),
+#   environment_name: get_env("SENTRY_ENVIRONMENT_NAME"),
+#   included_environments: [get_env("SENTRY_ENVIRONMENT_NAME")]
 
-config :new_relic_agent,
-  app_name: get_env("NEW_RELIC_APP_NAME"),
-  license_key: get_env("NEW_RELIC_LICENSE_KEY")
+# config :new_relic_agent,
+#   app_name: get_env("NEW_RELIC_APP_NAME"),
+#   license_key: get_env("NEW_RELIC_LICENSE_KEY")
+
+if System.get_env("FLY_APP_NAME") do
+  config :home_inventory, HomeInventory.Repo, socket_options: [:inet6]
+end

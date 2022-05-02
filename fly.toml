@@ -12,8 +12,10 @@ release_command = "/app/bin/home_inventory eval \"HomeInventory.Release.migrate\
 
 [env]
 CANONICAL_URL = "young-wind-7044.internal:8080"
+STATIC_URL = "young-wind-7044.internal:8080"
 PORT = "8080"
-DATABASE_POOL_SIZE = "20"
+DATABASE_POOL_SIZE = "40"
+DATABASE_SSL = "false"
 DEBUG_ERRORS = "true"
 
 [experimental]
