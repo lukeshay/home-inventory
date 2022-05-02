@@ -8,7 +8,8 @@
     "scripts": {
         "build": "node ./scripts/build.js",
         "prettier": "prettier --ignore-unknown --no-error-on-unmatched-pattern --check .",
-        "prettier:fix": "npm run prettier -- --fix"
+        "prettier:fix": "npm run prettier -- --fix",
+        "deploy": "npm ci && npm run build"
     },
     "prettier": "prettier-config-get-off-my-lawn",
     "dependencies": {
