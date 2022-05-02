@@ -4,13 +4,24 @@ defmodule HomeInventory.MixProject do
   def project do
     [
       app: :home_inventory,
-      version: "0.1.0",
-      elixir: "~> 1.12",
+      version: "0.0.1",
+      elixir: "~> 1.13",
+      erlang: "~> 24.1",
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_paths: ["test"],
+      test_pattern: "**/*_test.exs",
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: releases()
     ]
   end
 
@@ -33,22 +44,67 @@ defmodule HomeInventory.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.7"},
-      {:phoenix_ecto, "~> 4.4"},
-      {:ecto_sql, "~> 3.6"},
-      {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.17.5"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:phoenix_live_dashboard, "~> 0.6"},
+      # Assets bundling
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
-      {:swoosh, "~> 1.3"},
+
+      # HTTP Client
+      {:hackney, "~> 1.18"},
+
+      # HTTP server
+      {:plug_cowboy, "~> 2.5"},
+      {:plug_canonical_host, "~> 2.0"},
+      {:corsica, "~> 1.1"},
+
+      # Phoenix
+      {:phoenix, "~> 1.6"},
+      {:phoenix_html, "~> 3.2"},
+      {:phoenix_ecto, "~> 4.4"},
+      {:phoenix_live_reload, "~> 1.3", only: :dev},
+      {:phoenix_live_view, "~> 0.17.5"},
+      {:phoenix_live_dashboard, "~> 0.6"},
+      {:jason, "~> 1.2"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.18"},
-      {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+
+      # GraphQL
+      {:absinthe, "~> 1.7"},
+      {:absinthe_plug, "~> 1.5.8"},
+      {:dataloader, "~> 1.0"},
+      {:absinthe_error_payload, "~> 1.1"},
+
+      # Database
+      {:ecto_sql, "~> 3.7"},
+      {:postgrex, "~> 0.16"},
+
+      # Translations
+      {:gettext, "~> 0.19"},
+
+      # Errors
+      {:sentry, "~> 8.0"},
+
+      # Monitoring
+      {:new_relic_agent, "~> 1.27"},
+      {:new_relic_absinthe, "~> 0.0"},
+
+      # Linting
+      {:credo, "~> 1.6", only: [:dev, :test], override: true},
+      {:credo_envvar, "~> 0.1", only: [:dev, :test], runtime: false},
+      {:credo_naming, "~> 2.0", only: [:dev, :test], runtime: false},
+
+      # Security check
+      {:sobelow, "~> 0.11", only: [:dev, :test], runtime: true},
+      {:mix_audit, "~> 1.0", only: [:dev, :test], runtime: false},
+
+      # Health
+      {:plug_checkup, "~> 0.6"},
+
+      # Test factories
+      {:ex_machina, "~> 2.7", only: :test},
+      {:faker, "~> 0.17", only: :test},
+      {:floki, ">= 0.30.0", only: :test},
+
+      # Test coverage
+      {:excoveralls, "~> 0.14", only: :test}
     ]
   end
 
@@ -65,6 +121,17 @@ defmodule HomeInventory.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": ["cmd --cd assets npm run deploy --deploy", "phx.digest"]
+    ]
+  end
+
+  defp releases do
+    [
+      home_inventory: [
+        version: {:from_app, :home_inventory},
+        applications: [home_inventory: :permanent],
+        include_executables_for: [:unix],
+        steps: [:assemble, :tar]
+      ]
     ]
   end
 end

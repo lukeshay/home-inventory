@@ -7,11 +7,19 @@
     "main": "index.js",
     "scripts": {
         "build": "node ./scripts/build.js",
+        "deploy": "npm ci && npm run build",
+        "lint": "eslint .",
+        "lint:fix": "npm run lint -- --fix",
         "prettier": "prettier --ignore-unknown --no-error-on-unmatched-pattern --check .",
-        "prettier:fix": "npm run prettier -- --fix",
-        "deploy": "npm ci && npm run build"
+        "prettier:fix": "npm run prettier -- --write"
     },
     "prettier": "prettier-config-get-off-my-lawn",
+    "eslintConfig": {
+        "extends": "get-off-my-lawn",
+        "rules": {
+            "quote-props": "off"
+        }
+    },
     "dependencies": {
         "phoenix": "file:../deps/phoenix",
         "phoenix_html": "file:../deps/phoenix_html",
@@ -19,8 +27,13 @@
     },
     "devDependencies": {
         "esbuild": "^0.14.38",
+        "eslint": "^8.14.0",
+        "eslint-config-get-off-my-lawn": "^7.1.0",
         "prettier": "^2.6.2",
         "prettier-config-get-off-my-lawn": "^1.0.0",
         "prettier-plugin-packagejson": "^2.2.17"
+    },
+    "engines": {
+        "node": "16.x"
     }
 }
