@@ -1,8 +1,6 @@
 defmodule HomeInventoryWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :home_inventory
 
-  import HomeInventory.Config
-
   alias Plug.Conn
 
   @plug_ssl Plug.SSL.init(rewrite_on: [:x_forwarded_proto])

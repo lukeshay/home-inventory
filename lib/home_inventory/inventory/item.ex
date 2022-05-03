@@ -7,6 +7,8 @@ defmodule HomeInventory.Inventory.Item do
 
   schema "items" do
     field :name, :string
+    field :quantity, :integer
+    field :sku, :string
     belongs_to :location, HomeInventory.Inventory.Location
 
     timestamps()
@@ -15,7 +17,7 @@ defmodule HomeInventory.Inventory.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:name, :location_id])
+    |> cast(attrs, [:name, :location_id, :quantity, :sku])
     |> validate_required([:name, :location_id])
   end
 

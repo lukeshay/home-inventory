@@ -21,6 +21,22 @@
     </div>
     <%= error_tag f, :location_id %>
   </div>
+
+  <div class="field">
+    <%= label f, :quantity, class: "label" %>
+    <div class="control">
+      <%= text_input f, :quantity, class: "input" %>
+    </div>
+    <%= error_tag f, :quantity %>
+  </div>
+
+  <div class="field">
+    <%= label f, :sku, class: "label" %>
+    <div class="control">
+      <%= text_input f, :sku, class: "input" %>
+    </div>
+    <%= error_tag f, :sku %>
+  </div>
   
   <div class="field is-grouped">
     <div class="control">

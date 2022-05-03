@@ -49,8 +49,8 @@ defmodule HomeInventoryWeb.Router do
     opts =
       Plug.Session.init(
         store: :cookie,
-        key: Application.get_env(:elixir_boilerplate, __MODULE__)[:session_key],
-        signing_salt: Application.get_env(:elixir_boilerplate, __MODULE__)[:session_signing_salt]
+        key: Application.get_env(:home_inventory, __MODULE__)[:session_key],
+        signing_salt: Application.get_env(:home_inventory, __MODULE__)[:session_signing_salt]
       )
 
     Plug.Session.call(conn, opts)

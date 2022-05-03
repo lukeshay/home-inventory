@@ -1,4 +1,7 @@
-<h1 class="is-size-2">Locations</h1>
+<div class="is-flex is-flex-direction-row is-align-items-center is-justify-content-space-between">
+  <h1 class="is-size-2">Locations</h1>
+  <span><%= link "New Location", to: Routes.location_path(@conn, :new), class: "button is-primary" %></span>
+</div>
 
 <table class="table is-fullwidth">
   <thead>
@@ -30,5 +33,3 @@
     </tr>
   </tfoot>
 </table>
-
-<span><%= link "New Location", to: Routes.location_path(@conn, :new) %></span>
