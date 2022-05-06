@@ -1,8 +1,11 @@
-const esbuild = require('esbuild');
+const process = require('process');
 
-const args = process.argv.slice(2);
-const watch = args.includes('--watch');
-const deploy = args.includes('--deploy');
+// eslint-disable-next-line node/no-unpublished-require
+const {build} = require('esbuild');
+
+const args = new Set(process.argv.slice(2));
+const watch = args.has('--watch');
+const deploy = args.has('--deploy');
 
 const loader = {
     // Add loaders for images/fonts/etc, e.g. { '.svg': 'file' }
@@ -13,20 +16,20 @@ const plugins = [
 ];
 
 let opts = {
-    entryPoints: ['js/app.js'],
     bundle: true,
-    target: 'es2017',
-    outdir: '../priv/static/assets',
-    logLevel: 'info',
+    entryPoints: ['js/app.js'],
     loader,
+    logLevel: 'info',
+    outdir: '../priv/static/assets',
     plugins,
+    target: 'es2017',
 };
 
 if (watch) {
     opts = {
         ...opts,
-        watch,
         sourcemap: 'inline',
+        watch,
     };
 }
 
@@ -37,11 +40,12 @@ if (deploy) {
     };
 }
 
-const promise = esbuild.build(opts);
+const promise = build(opts);
 
 if (watch) {
-    promise.then((_result) => {
+    promise.then(() => {
         process.stdin.on('close', () => {
+            // eslint-disable-next-line unicorn/no-process-exit
             process.exit(0);
         });
 

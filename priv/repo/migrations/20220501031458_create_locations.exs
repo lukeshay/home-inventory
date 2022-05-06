@@ -3,8 +3,8 @@ defmodule HomeInventory.Repo.Migrations.CreateLocations do
 
   def change do
     create table(:locations) do
-      add :name, :string
-      add :description, :text
+      add(:name, :string)
+      add(:description, :text)
 
       timestamps()
     end

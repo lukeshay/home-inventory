@@ -28,8 +28,7 @@ common_checks = [
   {Credo.Check.Refactor.FunctionArity},
   {Credo.Check.Refactor.MapInto, false},
   {Credo.Check.Refactor.MatchInCondition},
-  {Credo.Check.Refactor.PipeChainStart,
-   excluded_argument_types: ~w(atom binary fn keyword)a, excluded_functions: ~w(from)},
+  {Credo.Check.Refactor.PipeChainStart, excluded_argument_types: ~w(atom binary fn keyword)a, excluded_functions: ~w(from)},
   {Credo.Check.Refactor.CyclomaticComplexity},
   {Credo.Check.Refactor.NegatedConditionsInUnless},
   {Credo.Check.Refactor.NegatedConditionsWithElse},
@@ -59,8 +58,7 @@ common_checks = [
      ~r/^Utils?$/i
    ]},
   {CredoNaming.Check.Consistency.ModuleFilename,
-   excluded_paths: ["config", "mix.exs", "priv", "test/support"],
-   acronyms: [{"HomeInventoryGraphQL", "home_inventory_graphql"}, {"GraphQL", "graphql"}]}
+   excluded_paths: ["config", "mix.exs", "priv", "test/support"], acronyms: [{"HomeInventoryGraphQL", "home_inventory_graphql"}, {"GraphQL", "graphql"}]}
 ]
 
 %{

@@ -5,45 +5,49 @@ defmodule HomeInventoryWeb.Endpoint do
 
   @plug_ssl Plug.SSL.init(rewrite_on: [:x_forwarded_proto])
 
-  socket "/live", Phoenix.LiveView.Socket
-  socket "/socket", HomeInventoryWeb.Socket
+  socket("/live", Phoenix.LiveView.Socket)
+  socket("/socket", HomeInventoryWeb.Socket)
 
-  plug :ping
-  plug :canonical_host
-  plug :force_ssl
-  plug :cors
+  plug(:ping)
+  plug(:canonical_host)
+  plug(:force_ssl)
+  plug(:cors)
 
-  plug Plug.Static,
+  plug(Plug.Static,
     at: "/",
     from: :home_inventory,
     gzip: false,
     only: ~w(assets fonts images favicon.ico robots.txt)
+  )
 
   if code_reloading? do
-    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
-    plug Phoenix.LiveReloader
-    plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :home_inventory
+    socket("/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket)
+    plug(Phoenix.LiveReloader)
+    plug(Phoenix.CodeReloader)
+    plug(Phoenix.Ecto.CheckRepoStatus, otp_app: :home_inventory)
   end
 
-  plug Phoenix.LiveDashboard.RequestLogger,
+  plug(Phoenix.LiveDashboard.RequestLogger,
     param_key: "request_logger",
     cookie_key: "request_logger"
+  )
 
-  plug Plug.RequestId
-  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+  plug(Plug.RequestId)
+  plug(Plug.Telemetry, event_prefix: [:phoenix, :endpoint])
 
-  plug Plug.Parsers,
+  plug(Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
+  )
 
-  plug Plug.MethodOverride
-  plug Plug.Head
+  plug(Plug.MethodOverride)
+  plug(Plug.Head)
 
-  plug HomeInventoryHealth.Router
+  plug(HomeInventoryHealth.Router)
+  plug(HomeInventoryGraphQL.Router)
   plug(:halt_if_sent)
-  plug HomeInventoryWeb.Router
+  plug(HomeInventoryWeb.Router)
 
   @doc """
   Callback invoked for dynamically configuring the endpoint.
@@ -77,10 +81,7 @@ defmodule HomeInventoryWeb.Endpoint do
   defp canonical_host(%{request_path: "/health"} = conn, _opts), do: conn
 
   defp canonical_host(conn, _opts) do
-    opts =
-      PlugCanonicalHost.init(
-        canonical_host: Application.get_env(:home_inventory, :canonical_host)
-      )
+    opts = PlugCanonicalHost.init(canonical_host: Application.get_env(:home_inventory, :canonical_host))
 
     PlugCanonicalHost.call(conn, opts)
   end

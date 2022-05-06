@@ -71,9 +71,9 @@ defmodule HomeInventoryWeb.LocationControllerTest do
       conn = delete(conn, Routes.location_path(conn, :delete, location))
       assert redirected_to(conn) == Routes.location_path(conn, :index)
 
-      assert_error_sent 404, fn ->
+      assert_error_sent(404, fn ->
         get(conn, Routes.location_path(conn, :show, location))
-      end
+      end)
     end
   end
 

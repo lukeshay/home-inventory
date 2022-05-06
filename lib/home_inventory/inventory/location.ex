@@ -6,9 +6,9 @@ defmodule HomeInventory.Inventory.Location do
   use Ecto.Schema
 
   schema "locations" do
-    field :description, :string
-    field :name, :string
-    has_many :items, HomeInventory.Inventory.Item
+    field(:description, :string)
+    field(:name, :string)
+    has_many(:items, HomeInventory.Inventory.Item)
 
     timestamps()
   end

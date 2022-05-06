@@ -132,7 +132,7 @@ format-assets:
 	cd assets && npm run prettier:fix
 
 .PHONY: lint
-lint: lint-elixir lint-scripts ## Lint project files
+lint: lint-elixir lint-assets ## Lint project files
 # lint-styles
 
 .PHONY: lint-elixir
@@ -140,8 +140,8 @@ lint-elixir:
 	mix compile --warnings-as-errors --force
 	mix credo --strict
 
-.PHONY: lint-scripts
-lint-scripts:
+.PHONY: lint-assets
+lint-assets:
 	cd assets && npm run lint
 
 # .PHONY: lint-styles

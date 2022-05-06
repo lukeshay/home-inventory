@@ -2,25 +2,25 @@ defmodule HomeInventoryWeb.Router do
   use HomeInventoryWeb, :router
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :session
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {HomeInventoryWeb.LayoutView, :root}
-    plug :protect_from_forgery
-    plug HomeInventoryWeb.ContentSecurityPolicy
+    plug(:accepts, ["html"])
+    plug(:session)
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, {HomeInventoryWeb.LayoutView, :root})
+    plug(:protect_from_forgery)
+    plug(HomeInventoryWeb.ContentSecurityPolicy)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   scope "/", HomeInventoryWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/", PageController, :index
-    resources "/locations", LocationController
-    resources "/items", ItemController
+    get("/", PageController, :index)
+    resources("/locations", LocationController)
+    resources("/items", ItemController)
   end
 
   # Other scopes may use custom stacks.
@@ -39,9 +39,9 @@ defmodule HomeInventoryWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: HomeInventoryWeb.Telemetry
+      live_dashboard("/dashboard", metrics: HomeInventoryWeb.Telemetry)
     end
   end
 

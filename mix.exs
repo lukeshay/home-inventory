@@ -69,6 +69,7 @@ defmodule HomeInventory.MixProject do
       # GraphQL
       {:absinthe, "~> 1.7"},
       {:absinthe_plug, "~> 1.5.8"},
+      {:absinthe_federation, "~> 0.2.4"},
       {:dataloader, "~> 1.0"},
       {:absinthe_error_payload, "~> 1.1"},
 

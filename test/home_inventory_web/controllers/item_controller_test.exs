@@ -71,9 +71,9 @@ defmodule HomeInventoryWeb.ItemControllerTest do
       conn = delete(conn, Routes.item_path(conn, :delete, item))
       assert redirected_to(conn) == Routes.item_path(conn, :index)
 
-      assert_error_sent 404, fn ->
+      assert_error_sent(404, fn ->
         get(conn, Routes.item_path(conn, :show, item))
-      end
+      end)
     end
   end
 

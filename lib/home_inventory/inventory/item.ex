@@ -6,10 +6,10 @@ defmodule HomeInventory.Inventory.Item do
   use Ecto.Schema
 
   schema "items" do
-    field :name, :string
-    field :quantity, :integer
-    field :sku, :string
-    belongs_to :location, HomeInventory.Inventory.Location
+    field(:name, :string)
+    field(:quantity, :integer)
+    field(:sku, :string)
+    belongs_to(:location, HomeInventory.Inventory.Location)
 
     timestamps()
   end

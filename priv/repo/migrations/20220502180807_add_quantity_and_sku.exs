@@ -3,8 +3,8 @@ defmodule HomeInventory.Repo.Migrations.AddQuantity do
 
   def change do
     alter table(:items) do
-      add :quantity, :integer
-      add :sku, :string
+      add(:quantity, :integer)
+      add(:sku, :string)
     end
   end
 end

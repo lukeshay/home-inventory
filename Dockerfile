@@ -1,99 +1,116 @@
-# Find eligible builder and runner images on Docker Hub. We use Ubuntu/Debian instead of
-# Alpine to avoid DNS resolution issues in production.
+# Step 1 - hex dependencies
 #
-# https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=ubuntu
-# https://hub.docker.com/_/ubuntu?tab=tags
+FROM hexpm/elixir:1.13.4-erlang-24.2.1-alpine-3.15.0 AS otp-dependencies
+
+ENV MIX_ENV=prod
+
+WORKDIR /build
+
+# Install Alpine dependencies
+RUN apk add --no-cache git
+
+# Install Erlang dependencies
+RUN mix local.rebar --force && \
+  mix local.hex --force
+
+# Install hex dependencies
+COPY mix.* ./
+RUN mix deps.get --only prod
+
 #
+# Step 2 - npm dependencies + build the JS/CSS assets
 #
-# This file is based on these images:
+FROM node:16.13-alpine3.14 AS js-builder
+
+ENV NODE_ENV=prod
+
+WORKDIR /build
+
+# Install Alpine dependencies
+RUN apk update --no-cache && \
+  apk upgrade --no-cache && \
+  apk add --no-cache git
+
+# Copy hex dependencies
+COPY --from=otp-dependencies /build/deps deps
+
+# Install npm dependencies
+COPY assets assets
+RUN npm ci --prefix assets --no-audit --no-color --unsafe-perm --progress=false --loglevel=error
+
 #
-#   - https://hub.docker.com/r/hexpm/elixir/tags - for the build image
-#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bullseye-20210902-slim - for the release image
-#   - https://pkgs.org/ - resource for finding needed packages
-#   - Ex: hexpm/elixir:1.13.4-erlang-24.3.3-debian-bullseye-20210902-slim
+# Step 3 - build the OTP binary
 #
-ARG ELIXIR_VERSION=1.13.4
-ARG OTP_VERSION=24.3.3
-ARG DEBIAN_VERSION=bullseye-20210902-slim
+FROM hexpm/elixir:1.13.4-erlang-24.2.1-alpine-3.15.0 AS otp-builder
 
-ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
-ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
+ARG APP_NAME
+ARG APP_VERSION
 
-FROM ${BUILDER_IMAGE} as builder
+ENV APP_NAME=${APP_NAME} \
+  APP_VERSION=${APP_VERSION} \
+  MIX_ENV=prod
 
-# install build dependencies
-RUN apt-get update -y \
-    && apt-get install -y build-essential git curl \
-    && apt-get remove -y nodejs nodejs-legacy \
-    && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean && rm -f /var/lib/apt/lists/*_*
+WORKDIR /build
 
-# prepare build dir
-WORKDIR /app
+# Install Alpine dependencies
+RUN apk update --no-cache && \
+  apk upgrade --no-cache && \
+  apk add --no-cache git nodejs npm
 
-# install hex + rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
+# Install Erlang dependencies
+RUN mix local.rebar --force && \
+  mix local.hex --force
 
-# set build ENV
-ENV MIX_ENV="prod"
-
-# install mix dependencies
-COPY mix.exs mix.lock ./
-RUN mix deps.get --only $MIX_ENV
-RUN mkdir config
-
-# copy compile-time config files before we compile dependencies
-# to ensure any relevant config change will trigger the dependencies
-# to be re-compiled.
-COPY config/config.exs config/${MIX_ENV}.exs config/
+# Copy hex dependencies
+COPY mix.* ./
+COPY --from=otp-dependencies /build/deps deps
 RUN mix deps.compile
 
-COPY priv priv
-
+# Compile codebase
+COPY config config
 COPY lib lib
-
-COPY assets assets
-
-# compile assets
-RUN mix assets.deploy
-
-# Compile the release
+COPY priv priv
 RUN mix compile
 
-# Changes to config/runtime.exs don't require recompiling the code
-COPY config/runtime.exs config/
+# Copy assets from step 1
+COPY --from=js-builder /build/assets assets
+RUN mix assets.deploy
 
+# Build OTP release
 COPY rel rel
 RUN mix release
 
-# start a new build stage so that the final image will only contain
-# the compiled release and other runtime necessities
-FROM ${RUNNER_IMAGE}
+#
+# Step 4 - build a lean runtime container
+#
+FROM alpine:3.15.0
 
-RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
-  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+ARG APP_NAME
+ARG APP_VERSION
 
-# Set the locale
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+ENV APP_NAME=${APP_NAME} \
+  APP_VERSION=${APP_VERSION}
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+# Install Alpine dependencies
+RUN apk update --no-cache && \
+  apk upgrade --no-cache && \
+  apk add --no-cache bash openssl libgcc libstdc++ ncurses-libs
 
-WORKDIR "/app"
-RUN chown nobody /app
+WORKDIR /opt/home_inventory
 
-# set runner ENV
-ENV MIX_ENV="prod"
+# Copy the OTP binary from the build step
+COPY --from=otp-builder /build/_build/prod/${APP_NAME}-${APP_VERSION}.tar.gz .
+RUN tar -xvzf ${APP_NAME}-${APP_VERSION}.tar.gz && \
+  rm ${APP_NAME}-${APP_VERSION}.tar.gz
 
-# Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/home_inventory ./
+# Copy Docker entrypoint
+COPY priv/scripts/docker-entrypoint.sh /usr/local/bin
+RUN chmod a+x /usr/local/bin/docker-entrypoint.sh
 
-USER nobody
+# Create non-root user
+RUN adduser -D  home_inventory&& \
+  chown -R home_inventory: /opt/home_inventory
+USER home_inventory
 
-CMD ["/app/bin/server"]
-# Appended by flyctl
-ENV ECTO_IPV6 true
-ENV ERL_AFLAGS "-proto_dist inet6_tcp"
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["start"]
