@@ -6,11 +6,13 @@ defmodule HomeInventoryGraphQL.Schema do
 
   import_types(Absinthe.Type.Custom)
   import_types(HomeInventoryGraphQL.Application.Types)
+  import_types(HomeInventoryGraphQL.Item.Types)
 
   query do
     extends()
 
     import_fields(:application_queries)
+    import_fields(:item_queries)
   end
 
   # Even if having an empty mutation block is valid and works in Ansinthe, it

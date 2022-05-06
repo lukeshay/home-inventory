@@ -105,7 +105,8 @@ defmodule HomeInventory.MixProject do
       {:floki, ">= 0.30.0", only: :test},
 
       # Test coverage
-      {:excoveralls, "~> 0.14", only: :test}
+      {:excoveralls, "~> 0.14", only: :test},
+      {:dart_sass, "~> 0.3", runtime: Mix.env() == :dev}
     ]
   end
 
@@ -121,7 +122,7 @@ defmodule HomeInventory.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["cmd --cd assets npm run deploy --deploy", "phx.digest"]
+      "assets.deploy": ["cmd --cd assets npm run deploy --deploy", "sass default --no-source-map --style=compressed", "phx.digest"]
     ]
   end
 

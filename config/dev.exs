@@ -5,7 +5,12 @@ config :home_inventory, HomeInventoryWeb.Endpoint,
   check_origin: false,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
-    node: ["scripts/build.js", "--watch", cd: Path.expand("../assets", __DIR__)]
+    node: ["scripts/build.js", "--watch", cd: Path.expand("../assets", __DIR__)],
+    sass: {
+      DartSass,
+      :install_and_run,
+      [:default, ~w(--embed-source-map --source-map-urls=absolute --watch)]
+    }
   ],
   live_reload: [
     patterns: [

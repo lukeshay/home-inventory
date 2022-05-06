@@ -34,5 +34,12 @@ config :sentry,
 
 config :logger, backends: [:console, Sentry.LoggerBackend]
 
+config :dart_sass,
+  version: "1.43.4",
+  default: [
+    args: ~w(css/app.scss ../priv/static/assets/app.css),
+    cd: Path.expand("../assets", __DIR__)
+  ]
+
 # Import environment configuration
 import_config "#{Mix.env()}.exs"
